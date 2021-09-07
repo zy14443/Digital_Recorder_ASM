@@ -1,0 +1,60 @@
+
+
+      9000              A_DPORT EQU 9000H		;ADC0809通道地址
+      A000              D_APORT EQU 0A000H		;DAC0832地址
+
+                        ;==========主程序==========
+                        	ORG  0000H
+0000  020100            	LJMP START
+
+                        	ORG  000BH			;T0的中断入口
+000B  020127            	LJMP IT0P
+
+                        	ORG  0100H
+0100                    START:
+0100  758160            	MOV SP,#60H		;初始化堆栈区
+
+                        	
+0103  120119            	LCALL INIT0			;定时中断初始化
+0106  D28C              	SETB TR0
+
+
+0108  759000            		MOV P1,#00H
+                        	   
+010B  758E02            	   	MOV 8EH, #02H
+                        	   		   		   
+
+010E                    AA:
+
+                        	 	
+                        	 	
+                        		
+010E  7E00              		MOV R6,#00H
+0110  BE01FD                		CJNE R6,#01H,$             ;DA转换结束
+0113  D292                  		SETB P1.2				;计数器时钟
+
+0115  C292              		CLR P1.2	
+                        	 	 	
+0117  60F5              	 	JZ AA
+                        	    
+                        	 
+
+                        ;=========/*定时器0初始化*/==========
+0119                    INIT0:
+0119  758901            		MOV TMOD,#01H
+011C  758A83            		MOV TL0,#83H
+011F  758CFF            		MOV TH0,#0FFH
+                        		
+0122  D2A9              		SETB ET0
+0124  D2AF              		SETB EA
+                        	;	SETB TR0
+0126  22                		RET
+0127                    IT0P:
+0127  758A83            		MOV TL0,#83H
+012A  758CFF            		MOV TH0,#0FFH
+012D  7E01              		MOV R6,#01H
+012F  32                		RETI
+                        		END
+
+
+
